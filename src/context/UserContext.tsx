@@ -1,35 +1,19 @@
-import React, { createContext, useContext } from 'react'
-import Axios from "axios"
+import { createContext, useContext } from 'react'
 import { useQuery } from '@tanstack/react-query';
-Axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+import { useUserAxiosContext } from './UserAxiosContext';
 
 const StateContext = createContext();
 
-interface User {
-  firstname: string,
-  lastname: string,
-  username: string,
-  password: string
-}
-
 export const UserContext = ({ children }) => {
-  const {data: users, isLoading: usersIsLoading, refetch: usersRefetch} = useQuery(['users'], () => {
-    return Axios.get('/api/users').then(res => {
+  const { userAxios, token } = useUserAxiosContext()
+  const { data: users, isLoading: usersIsLoading, refetch: usersRefetch } = useQuery(['users', token], () => {
+    return userAxios.get('/api/users').then((res: { data: any; }) => {
       return res.data
     })
   })
 
-  const createUser = async (user: User) => {
-    const { firstname, lastname, username, password } = user
-    await Axios.post('/api/users', {firstname, lastname, username, password}).then(async (res) => {
-      await usersRefetch()
-    }).catch((e) => {
-      console.log(e)
-    })
-  }
-
   return (
-    <StateContext.Provider value={{ users, usersIsLoading, createUser }}>
+    <StateContext.Provider value={{ users, usersIsLoading, usersRefetch }}>
       {children}
     </StateContext.Provider>
   )

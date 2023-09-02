@@ -8,14 +8,23 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { UserContext } from './context/UserContext.tsx'
+import AuthContext from './context/AuthContext.tsx'
+import { UserAxiosContext } from './context/UserAxiosContext.tsx'
+import ChatContext from './context/ChatContext.tsx'
 
 const queryClient = new QueryClient()
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <UserContext>
-        <RouterProvider router={router}/>
-      </UserContext>
+      <UserAxiosContext>
+        <AuthContext>
+          <UserContext>
+            <ChatContext>
+              <RouterProvider router={router} />
+            </ChatContext>
+          </UserContext>
+        </AuthContext>
+      </UserAxiosContext>
     </QueryClientProvider>
   </React.StrictMode>,
 )
