@@ -59,7 +59,7 @@ export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
       setToken(data.accessToken)
     }).catch(err => {
       if (err.response.status === 403) {
-        setToken(undefined)
+        setToken('')
       }
     });
   };

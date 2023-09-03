@@ -1,7 +1,8 @@
 import React from 'react'
 import { useChatContext } from '../context/ChatContext'
+import type { User } from '../context/UserAxiosContext'
 
-export default function UserCard({ user }) {
+export default function UserCard({ user }: { user: User }) {
   const { createChatRoom, setSelectedUser } = useChatContext()
   return (
     <div onClick={() => {
