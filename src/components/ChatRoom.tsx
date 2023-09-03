@@ -21,12 +21,12 @@ export default function ChatRoom() {
   })
 
   return (
-    <div className='h-full bg-orange-200 rounded-md flex justify-center items-center'>
-      {!selectedUser ? <span>No chat selected</span> : (
+    <div className='h-full bg-custLightNavy rounded-md flex justify-center items-center'>
+      {!selectedUser ? <span className='text-custWhite'>No chat selected</span> : (
         <div className='flex flex-col w-full h-full '>
 
-          <div className='flex items-center border-b-2 px-4 py-2 h-14 gap-2'>
-            <img className='rounded-[50%] object-cover h-full border aspect-square bg-white' src={`https://robohash.org/${user?.username}`} alt="" />
+          <div className='flex text-custWhite font-bold items-center border-b-2 px-4 py-2 h-14 gap-2'>
+            <img className='rounded-[50%] object-cover h-full border aspect-square bg-white' loading='lazy' src={`https://robohash.org/${selectedUser?.username}`} alt="" />
             <span>{selectedUser?.username}</span>
           </div>
 
@@ -57,8 +57,8 @@ export default function ChatRoom() {
           >
             {({ handleChange, handleSubmit, values }) => (
               <form onSubmit={handleSubmit} className='border-t-2 py-2 px-4 flex justify-between gap-4'>
-                <input value={values.messageContent} onChange={handleChange} name="messageContent" type="text" className='border border-black py-1 px-4 w-full rounded-[40px]' placeholder='text...' />
-                <button disabled={isCreating} type='submit' className='border border-black bg-white px-4 py-1 rounded-[40px]'>
+                <input value={values.messageContent} onChange={handleChange} name="messageContent" type="text" className='shadow-md py-1 px-4 w-full rounded-lg' placeholder='text...' />
+                <button disabled={isCreating} type='submit' className='transition duration-200 hover:bg-gray-200 border-b-2 border-custBlue bg-custWhite px-4 py-1 rounded-lg'>
                   {isCreating ? 'sending...' : 'send'}
                 </button>
               </form>)}

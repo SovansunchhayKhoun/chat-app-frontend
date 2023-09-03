@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function ErrorPage() {
   return (
-    <div>404 Not Found</div>
+    <div className='text-custWhite'>404 Not Found</div>
   )
 }

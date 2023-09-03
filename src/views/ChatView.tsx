@@ -13,7 +13,7 @@ export default function ChatView() {
         <div className='flex mt-12 h-screen overflow-hidden'>
           <div className='flex h-[70%] gap-4 w-full'>
             {/* list users */}
-            <div className='px-4 flex-1 overflow-auto rounded-md bg-blue-400 flex flex-col gap-2'>
+            <div className='text-custWhite px-4 flex-1 overflow-auto rounded-md bg-[#053B50] flex flex-col gap-2'>
               <div className='py-2 border-b-2'>User's list</div>
               {users?.filter(u => u._id !== user?._id).length === 0 && 'No users registered'}
               {usersIsLoading ? 'Loading' : users?.filter(u => u._id !== user?._id).map(user => (<UserCard key={user?._id} user={user} />))}
@@ -24,7 +24,7 @@ export default function ChatView() {
             </div>
           </div>
         </div>
-      ) : 'Unauthorized'}
+      ) : <span className='text-custWhite'>Unauthorized</span>}
     </div>
   )
 }
