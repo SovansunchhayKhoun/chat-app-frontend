@@ -1,18 +1,24 @@
 import { createContext, useContext } from 'react'
-import { useQuery } from '@tanstack/react-query';
+import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from '@tanstack/react-query';
 import { useUserAxiosContext } from './UserAxiosContext';
 import type { User } from './UserAxiosContext';
 
-const StateContext = createContext(null);
+type UserContext = {
+  users: User[] | undefined,
+  usersIsLoading: boolean,
+  usersRefetch: <TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<User[], unknown>>
+}
 
-export const UserContext = ({ children }: { children: React.ReactNode}) => {
+const StateContext = createContext<UserContext | null>(null);
+
+export const UserContext = ({ children }: { children: React.ReactNode }) => {
   const { userAxios, token } = useUserAxiosContext()
   const { data: users, isLoading: usersIsLoading, refetch: usersRefetch } = useQuery(['users', token], () => {
-    return userAxios.get('/api/users').then((res: { data: User[]}) => {
+    return userAxios.get('/api/users').then((res: { data: User[] }) => {
       return res.data
     })
   })
-  
+
   return (
     <StateContext.Provider value={{ users, usersIsLoading, usersRefetch }}>
       {children}
@@ -21,5 +27,10 @@ export const UserContext = ({ children }: { children: React.ReactNode}) => {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useUserContext = () => useContext(StateContext)
-
+export const useUserContext = () => {
+  const context = useContext(StateContext)
+  if(!context) {
+    throw new Error("useUserContext cannot be used out of UserProvider")
+  }
+  return context
+}
