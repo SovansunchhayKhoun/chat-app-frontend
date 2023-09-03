@@ -1,23 +1,30 @@
 import React, { useState, useContext, createContext } from 'react'
-import Axios from "axios"
+import Axios, { AxiosResponse } from "axios"
+import type { User } from './UserAxiosContext'
 import { useUserAxiosContext } from './UserAxiosContext'
 Axios.defaults.baseURL = import.meta.env.VITE_API_URL
 Axios.defaults.withCredentials = true
 
-interface User {
-  firstname: string,
-  lastname: string,
-  username: string,
-  password: string
+type AuthContext = {
+  register: (user: User, resetForm: CallableFunction) => Promise<void>,
+  login: (username: string, password: string, resetForm: CallableFunction) => Promise<void>,
+  logout: () => Promise<void>,
+  authError: AxiosResponse<unknown, unknown>[] | [],
+  setAuthError: React.Dispatch<React.SetStateAction<AxiosResponse<unknown, unknown>[]>>,
+  loginSuccess: boolean,
+  registerSuccess: boolean,
+  isLogin: boolean,
+  isLogout: boolean,
+  isRegister: boolean,
 }
 
-const StateContext = createContext()
+const StateContext = createContext<AuthContext | null>(null)
 
-export default function AuthContext({ children }) {
+export default function AuthContext({ children }: { children: React.ReactNode }) {
   const { token, setToken, setUser, getUser } = useUserAxiosContext()
   const [loginSuccess, setLoginSuccess] = useState(false)
   const [registerSuccess, setRegisterSuccess] = useState(false)
-  const [authError, setAuthError] = useState([])
+  const [authError, setAuthError] = useState<AxiosResponse<unknown, unknown>[]>([])
   const [isLogin, setIsLogin] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
   const [isLogout, setIsLogout] = useState(false)
@@ -25,7 +32,7 @@ export default function AuthContext({ children }) {
   const register = async (user: User, resetForm: CallableFunction) => {
     const { firstname, lastname, username, password, confirmPassword } = user
     setIsRegister(true)
-    await Axios.post('/api/register', { firstname, lastname, username, password, confirmPassword }).then(res => {
+    await Axios.post('/api/register', { firstname, lastname, username, password, confirmPassword }).then(() => {
       setRegisterSuccess(true)
       setAuthError([]) // clear auth error
       resetForm() // clear form values
@@ -33,10 +40,12 @@ export default function AuthContext({ children }) {
       setTimeout(() => {
         setRegisterSuccess(false)
       }, (3000));
-    }).catch((e: unknown) => {
+    }).catch((e) => {
       setRegisterSuccess(false)
+
       const { response } = e;
-      setAuthError([response.data, ...authError])
+
+      setAuthError([response?.data, ...authError])
       console.log(e)
     })
     setIsRegister(false)
@@ -46,7 +55,7 @@ export default function AuthContext({ children }) {
     setIsLogin(true)
     await Axios.post('/api/login', {
       username, password
-    }).then(({ data }) => {
+    }).then(({ data }: AxiosResponse) => {
       setAuthError([]) // clear auth errors
       setLoginSuccess(true)
       resetForm() // clear form values
@@ -58,7 +67,7 @@ export default function AuthContext({ children }) {
     }).catch((err) => {
       const { response } = err;
       setLoginSuccess(false)
-      setAuthError([response.data, ...authError])
+      setAuthError([response?.data, ...authError])
       console.log(err)
     })
     setIsLogin(false)
@@ -71,8 +80,8 @@ export default function AuthContext({ children }) {
       setUser({
         firstname: '',
         lastname: '',
+        username: '',
         password: '',
-        username: ''
       })
       setToken('')
     })
@@ -94,4 +103,12 @@ export default function AuthContext({ children }) {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAuthContext = () => useContext(StateContext)
+export const useAuthContext = () => {
+  const context = useContext(StateContext)
+  if (!context) {
+    throw new Error(
+      "useAuthContext must be used within a UserAuthContextProvider"
+    )
+  }
+  return context
+}

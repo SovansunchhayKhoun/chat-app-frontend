@@ -8,12 +8,12 @@ import { useUserAxiosContext } from '../context/UserAxiosContext'
 export default function ChatRoom() {
   const { user } = useUserAxiosContext()
   const { selectedUser, createMessage, chatRoomMessages, chatRoomMessagesIsLoading, isCreating } = useChatContext()
-  
-  return (
+    
+  return (  
     <div className='h-full bg-gray-400 rounded-md flex justify-center items-center'>
       {Object.keys(selectedUser).length === 0 ? <span>No chat selected</span> : (
         <div className='flex flex-col w-full h-full '>
-
+          
           <div className='flex items-center border-b-2 px-4 py-2 h-14 gap-2'>
             <img className='rounded-[50%] object-cover h-full border aspect-square bg-white' src={`https://robohash.org/${user.username}`} alt="" />
             <span>{selectedUser.username}</span>

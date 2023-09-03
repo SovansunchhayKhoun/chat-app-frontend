@@ -1,20 +1,40 @@
-import axios from "axios";
+import axios, { AxiosHeaderValue, AxiosInstance } from "axios";
 import { createContext, useContext, useState } from "react";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL
 
-const StateContext = createContext();
-export const UserAxiosContext = ({ children }) => {
-  const [token, setToken] = useState<string>('')
-  const [user, setUser] = useState({
-    _id: '',
-    firstname: '',
-    lastname: '',
-    password: '',
-    username: '',
-  })
-  const [userAxiosError, setUserAxiosError] = useState({})
-  const userAxios = axios.create({
+export type User = {
+  _id?: string,
+  firstname: string,
+  lastname: string,
+  password: string,
+  username: string,
+  confirmPassword?: string
+}
+
+type UserAxiosContextProvider = {
+  children: React.ReactNode,
+}
+
+type UserAxiosContext = {
+  userAxios: AxiosInstance,
+  token: AxiosHeaderValue | undefined,
+  setToken: React.Dispatch<React.SetStateAction<string>> | React.Dispatch<React.SetStateAction<AxiosHeaderValue>>,
+  getUser: () => Promise<void>,
+  userAxiosError: [] | never[],
+  setUserAxiosError: React.Dispatch<React.SetStateAction<[]>> | React.Dispatch<React.SetStateAction<never[]>>,
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>,
+  user: User | undefined,
+}
+
+const StateContext = createContext<UserAxiosContext | null>(null);
+
+export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
+  const [token, setToken] = useState('')
+  const [user, setUser] = useState<User>()
+  const [userAxiosError, setUserAxiosError] = useState([])
+
+  const userAxios: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
   });
@@ -39,12 +59,12 @@ export const UserAxiosContext = ({ children }) => {
       setToken(data.accessToken)
     }).catch(err => {
       if (err.response.status === 403) {
-        setToken('')
+        setToken(undefined)
       }
     });
   };
 
-  const getUser = async () => {
+  const getUser: () => Promise<void> = async () => {
     await axios.get("/api/user", {
       headers: {
         Authorization: token
@@ -96,4 +116,12 @@ export const UserAxiosContext = ({ children }) => {
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useUserAxiosContext = () => useContext(StateContext);
+export const useUserAxiosContext = () => {
+  const context = useContext(StateContext)
+  if (!context) {
+    throw new Error(
+      "useUserAxiosContext must be used within a UserAxiosContextProvider"
+    )
+  }
+  return context
+};
