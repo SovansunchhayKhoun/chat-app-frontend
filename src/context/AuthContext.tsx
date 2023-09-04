@@ -2,7 +2,7 @@ import React, { useState, useContext, createContext } from 'react'
 import Axios, { AxiosResponse } from "axios"
 import type { User } from './UserAxiosContext'
 import { useUserAxiosContext } from './UserAxiosContext'
-Axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/api'
+Axios.defaults.baseURL = import.meta.env.VITE_API_URL + '/api'
 Axios.defaults.withCredentials = true
 
 type Error = {
@@ -11,8 +11,8 @@ type Error = {
 }
 
 type AuthContext = {
-  register: (user: User, resetForm: CallableFunction) => Promise<void>,
-  login: (username: string, password: string, resetForm: CallableFunction) => Promise<void>,
+  register: (user: User, resetForm: CallableFunction, navigateFn: () => void) => Promise<void>,
+  login: (username: string, password: string, resetForm: CallableFunction, navigateFn: () => void) => Promise<void>,
   logout: () => Promise<void>,
   authError: Error[],
   setAuthError: React.Dispatch<React.SetStateAction<Error[]>>,
@@ -34,27 +34,27 @@ export default function AuthContext({ children }: { children: React.ReactNode })
   const [isRegister, setIsRegister] = useState(false)
   const [isLogout, setIsLogout] = useState(false)
 
-  const register = async (user: User, resetForm: CallableFunction) => {
+  const register = async (user: User, resetForm: CallableFunction, navigateFn: () => void) => {
     const { firstname, lastname, username, password, confirmPassword } = user
     setIsRegister(true)
     await Axios.post('/register', { firstname, lastname, username, password, confirmPassword }).then(() => {
       setRegisterSuccess(true)
       setAuthError([]) // clear auth error
       resetForm() // clear form values
-
+      navigateFn() // redirect
       setTimeout(() => {
         setRegisterSuccess(false)
-      }, (3000));
+      }, (2000));
     }).catch((e) => {
       setRegisterSuccess(false)
       const { response } = e;
-      setAuthError([response?.data, ...authError])
+      setAuthError([response?.data])
       console.log(e)
     })
     setIsRegister(false)
   }
 
-  const login = async (username: string, password: string, resetForm: CallableFunction) => {
+  const login = async (username: string, password: string, resetForm: CallableFunction, navigateFn: () => void) => {
     setIsLogin(true)
     await Axios.post('/login', {
       username, password
@@ -62,15 +62,16 @@ export default function AuthContext({ children }: { children: React.ReactNode })
       setAuthError([]) // clear auth errors
       setLoginSuccess(true)
       resetForm() // clear form values
+      navigateFn() // redirect
       setTimeout(() => {
         setLoginSuccess(false)
-      }, (3000));
+      }, (2000));
       setToken(data.accessToken)
       getUser()
     }).catch((err) => {
       const { response } = err;
       setLoginSuccess(false)
-      setAuthError([response?.data, ...authError])
+      setAuthError([response?.data])
       console.log(err)
     })
     setIsLogin(false)

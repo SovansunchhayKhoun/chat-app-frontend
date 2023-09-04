@@ -1,6 +1,7 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useAuthContext } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string().required("Username is Required"),
@@ -13,9 +14,12 @@ interface Login {
 }
 
 export default function Login() {
-  const { login, loginSuccess, isLogin, authError, setAuthError } = useAuthContext()
+  const { login, isLogin, authError, setAuthError } = useAuthContext()
+  const navigate = useNavigate()
+  const navigateFn = () => navigate('/chat')
+
   return (
-    <div>
+    <div className="m-auto flex flex-col gap-4 justify-center w-full h-full items-center">
       <Formik
         initialValues={{
           username: "",
@@ -23,58 +27,64 @@ export default function Login() {
         }}
         validationSchema={LoginSchema}
         onSubmit={async (values: Login, { resetForm }) => {
-          await login(values.username, values.password, resetForm)
+          await login(values.username, values.password, resetForm, navigateFn)
         }}
       >
         {({ errors, touched, handleBlur, handleChange, handleSubmit, values }) => {
           return (
-            <form onBlur={() => { setAuthError([]) }} className="flex flex-col w-fit gap-2" onSubmit={handleSubmit}>
-              {loginSuccess && (
-                <div className={`bg-green-200 text-green-500 font-bold text-sm rounded-md p-2`}>
-                  Successfully Login
-                </div>
-              )}
-              {authError.length > 0 && (
-                <div className={`bg-red-300 text-red-700 font-bold text-sm rounded-md p-2`}>
-                  {authError?.map((err, i) => (<span key={i}>{err?.message}</span>))}
-                </div>
-              )}
-              <div className="grid grid-cols-[1fr_2fr] gap-2 items-center">
-                <label htmlFor="username">Username</label>
-                <div className="flex flex-col gap-1">
-                  <input
-                    name="username"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.username}
-                    className="border px-4 py-1"
-                    placeholder="username"
-                    type="text"
-                  />
-                  {errors.username && touched.username && (<div className="text-xs text-red-500">{errors.username}</div>)}
+            <form onBlur={() => { setAuthError([]) }}
+              className="text-custWhite flex flex-col items-center bg-custTeal w-[50%] py-24 gap-10 rounded-lg"
+              onSubmit={handleSubmit}>
+              <p className="text-[96px] font-bold">Login</p>
+              <div className="flex flex-col items-center w-full">
+                <div className="w-[70%] flex flex-col gap-4">
+                  {authError.length > 0 && (
+                    <div className={`bg-red-300 text-red-700 font-bold text-sm rounded-md p-2`}>
+                      {authError?.map((err, i) => (<span key={i}>{err?.message}</span>))}
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <input
+                      name="username"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.username}
+                      className="bg-custLightNavy px-4 py-2.5 rounded-md"
+                      placeholder="username"
+                      type="text"
+                    />
+                    {errors.username && touched.username && (<div className="bg-red-200 w-fit text-xs text-red-700 font-bold rounded-lg px-4">{errors.username}</div>)}
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <input
+                      name="password"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.password}
+                      className="bg-custLightNavy px-4 py-2.5 rounded-md"
+                      placeholder="password"
+                      type="password"
+                    />
+                    {errors.password && touched.password && (<div className="bg-red-200 w-fit text-xs text-red-700 font-bold rounded-lg px-4">{errors.password}</div>)}
+                  </div>
+                  <div className="self-end flex gap-6">
+                    <p className="leading-[20px] text-end">
+                      <span>Don't have an account?</span> <br />
+                      <Link to={"/register"} className="font-bold underline underline-offset-2 text-custNavy">Register here</Link>
+                    </p>
+                    <button type="submit" disabled={isLogin}
+                      className={`${isLogin && 'bg-custWhite text-custTeal font-bold shadow-xl'} transition duration-300
+                        shadow-md bg-custLightNavy hover:bg-custDarkNavy rounded-md px-4 py-1`}>
+                      {isLogin ? 'Submit...' : 'Submit'}
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-[1fr_2fr] gap-2 items-center">
-                <label htmlFor="username">Password</label>
-                <div className="flex flex-col gap-1">
-                  <input
-                    name="password"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.password}
-                    className="border px-4 py-1"
-                    placeholder="password"
-                    type="password"
-                  />
-                  {errors.password && touched.password && (<div className="text-xs text-red-500">{errors.password}</div>)}
-                </div>
-              </div>
-              <button type="submit" disabled={isLogin} className={`${isLogin && 'bg-gray-500'} self-end border-2 border-black rounded-md px-4 py-1`}>{isLogin ? 'Submit...' : 'Submit'}</button>
             </form>
           )
         }}
       </Formik>
-
     </div>
   );
 }
