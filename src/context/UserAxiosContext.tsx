@@ -1,7 +1,7 @@
 import axios, { AxiosHeaderValue, AxiosInstance } from "axios";
 import { createContext, useContext, useState } from "react";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/.netlify/functions/api'
+axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/api'
 
 export type User = {
   _id?: string,
@@ -35,7 +35,7 @@ export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
   const [userAxiosError, setUserAxiosError] = useState([])
 
   const userAxios: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL+'/.netlify/functions/api',
+    baseURL: import.meta.env.VITE_API_URL+'/api',
     withCredentials: true,
   });
 

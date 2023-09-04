@@ -2,7 +2,7 @@ import React, { useState, useContext, createContext } from 'react'
 import Axios, { AxiosResponse } from "axios"
 import type { User } from './UserAxiosContext'
 import { useUserAxiosContext } from './UserAxiosContext'
-Axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/.netlify/functions/api'
+Axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/api'
 Axios.defaults.withCredentials = true
 
 type Error = {
