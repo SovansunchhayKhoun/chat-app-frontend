@@ -14,7 +14,7 @@ const StateContext = createContext<UserContext | null>(null);
 export const UserContext = ({ children }: { children: React.ReactNode }) => {
   const { userAxios, token } = useUserAxiosContext()
   const { data: users, isLoading: usersIsLoading, refetch: usersRefetch } = useQuery(['users', token], () => {
-    return userAxios.get('/api/users').then((res: { data: User[] }) => {
+    return userAxios.get('/users').then((res: { data: User[] }) => {
       return res.data
     })
   })

@@ -49,7 +49,7 @@ export default function ChatContext({ children }: { children: React.ReactNode })
 
   const { data: chatMessages, isLoading: chatRoomMessagesIsLoading, refetch: chatRoomMessagesRefetch } = useQuery(['messages', chatRoom?._id], () => {
     if (chatRoom?._id) {
-      return userAxios.get(`/api/chat-messages/${chatRoom?._id}`).then(({ data }: AxiosResponse) => {
+      return userAxios.get(`/chat-messages/${chatRoom?._id}`).then(({ data }: AxiosResponse) => {
         return data?.messages
       }).catch(error => {
         const { response } = error
@@ -60,7 +60,7 @@ export default function ChatContext({ children }: { children: React.ReactNode })
   })
   
   const getChatRoom = async (senderId: string | undefined, receiverId: string | undefined) => {
-    await userAxios.post('/api/chat-room', {
+    await userAxios.post('/chat-room', {
       senderId, receiverId
     }).then(async (res: AxiosResponse) => {
       setChatRoom(res.data?.chatRoom)
@@ -72,7 +72,7 @@ export default function ChatContext({ children }: { children: React.ReactNode })
 
   const createChatRoom = async (selectedUser: User) => {
     setIsCreating(true)
-    await userAxios.post('/api/chat-rooms', {
+    await userAxios.post('/chat-rooms', {
       senderId: user?._id,
       receiverId: selectedUser._id
     }).then(() => {
@@ -92,7 +92,7 @@ export default function ChatContext({ children }: { children: React.ReactNode })
       receiverId,
       chatRoomId: chatRoom?._id,
     }
-    await userAxios.post('/api/messages', newMessage).then(async () => {
+    await userAxios.post('/messages', newMessage).then(async () => {
       await chatRoomMessagesRefetch()
       socket().emit("send_message", newMessage)
     }).catch(err => {

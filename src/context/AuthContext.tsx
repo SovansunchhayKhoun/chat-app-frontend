@@ -2,7 +2,7 @@ import React, { useState, useContext, createContext } from 'react'
 import Axios, { AxiosResponse } from "axios"
 import type { User } from './UserAxiosContext'
 import { useUserAxiosContext } from './UserAxiosContext'
-Axios.defaults.baseURL = import.meta.env.VITE_API_URL
+Axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/.netlify/functions/api'
 Axios.defaults.withCredentials = true
 
 type Error = {
@@ -37,7 +37,7 @@ export default function AuthContext({ children }: { children: React.ReactNode })
   const register = async (user: User, resetForm: CallableFunction) => {
     const { firstname, lastname, username, password, confirmPassword } = user
     setIsRegister(true)
-    await Axios.post('/api/register', { firstname, lastname, username, password, confirmPassword }).then(() => {
+    await Axios.post('/register', { firstname, lastname, username, password, confirmPassword }).then(() => {
       setRegisterSuccess(true)
       setAuthError([]) // clear auth error
       resetForm() // clear form values
@@ -56,7 +56,7 @@ export default function AuthContext({ children }: { children: React.ReactNode })
 
   const login = async (username: string, password: string, resetForm: CallableFunction) => {
     setIsLogin(true)
-    await Axios.post('/api/login', {
+    await Axios.post('/login', {
       username, password
     }).then(({ data }: AxiosResponse) => {
       setAuthError([]) // clear auth errors
@@ -79,7 +79,7 @@ export default function AuthContext({ children }: { children: React.ReactNode })
   const logout = async () => {
     console.log("loggin out...")
     setIsLogout(true)
-    await Axios.post('/api/logout', token).then(() => {
+    await Axios.post('/logout', token).then(() => {
       setUser({
         firstname: '',
         lastname: '',

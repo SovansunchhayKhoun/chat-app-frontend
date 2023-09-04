@@ -1,7 +1,7 @@
 import axios, { AxiosHeaderValue, AxiosInstance } from "axios";
 import { createContext, useContext, useState } from "react";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL
+axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/.netlify/functions/api'
 
 export type User = {
   _id?: string,
@@ -35,7 +35,7 @@ export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
   const [userAxiosError, setUserAxiosError] = useState([])
 
   const userAxios: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: import.meta.env.VITE_API_URL+'/.netlify/functions/api',
     withCredentials: true,
   });
 
@@ -50,7 +50,7 @@ export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
   );
 
   const refreshToken = async () => {
-    await axios.get("/api/refresh", {
+    await axios.get("/refresh", {
       headers: {
         Authorization: token
       }
@@ -65,7 +65,7 @@ export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
   };
 
   const getUser: () => Promise<void> = async () => {
-    await axios.get("/api/user", {
+    await axios.get("/user", {
       headers: {
         Authorization: token
       }
