@@ -5,12 +5,17 @@ import { useUserAxiosContext } from './UserAxiosContext'
 Axios.defaults.baseURL = import.meta.env.VITE_API_URL
 Axios.defaults.withCredentials = true
 
+type Error = {
+  message: string,
+  [x: string]: unknown
+}
+
 type AuthContext = {
   register: (user: User, resetForm: CallableFunction) => Promise<void>,
   login: (username: string, password: string, resetForm: CallableFunction) => Promise<void>,
   logout: () => Promise<void>,
-  authError: AxiosResponse<unknown, unknown>[] | [],
-  setAuthError: React.Dispatch<React.SetStateAction<AxiosResponse<unknown, unknown>[]>>,
+  authError: Error[],
+  setAuthError: React.Dispatch<React.SetStateAction<Error[]>>,
   loginSuccess: boolean,
   registerSuccess: boolean,
   isLogin: boolean,
@@ -24,7 +29,7 @@ export default function AuthContext({ children }: { children: React.ReactNode })
   const { token, setToken, setUser, getUser } = useUserAxiosContext()
   const [loginSuccess, setLoginSuccess] = useState(false)
   const [registerSuccess, setRegisterSuccess] = useState(false)
-  const [authError, setAuthError] = useState<AxiosResponse<unknown, unknown>[]>([])
+  const [authError, setAuthError] = useState<Error[]>([])
   const [isLogin, setIsLogin] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
   const [isLogout, setIsLogout] = useState(false)
@@ -42,9 +47,7 @@ export default function AuthContext({ children }: { children: React.ReactNode })
       }, (3000));
     }).catch((e) => {
       setRegisterSuccess(false)
-
       const { response } = e;
-
       setAuthError([response?.data, ...authError])
       console.log(e)
     })

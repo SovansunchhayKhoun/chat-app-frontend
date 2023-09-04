@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useAuthContext } from "../context/AuthContext";
@@ -23,13 +22,13 @@ export default function Login() {
           password: "",
         }}
         validationSchema={LoginSchema}
-        onSubmit={async (values: Login, {resetForm}) => {
+        onSubmit={async (values: Login, { resetForm }) => {
           await login(values.username, values.password, resetForm)
         }}
       >
-        {({ errors, touched, handleBlur, handleChange, handleSubmit, values, resetForm }) => {
+        {({ errors, touched, handleBlur, handleChange, handleSubmit, values }) => {
           return (
-            <form onBlur={() => {setAuthError([])}} className="flex flex-col w-fit gap-2" onSubmit={handleSubmit}>
+            <form onBlur={() => { setAuthError([]) }} className="flex flex-col w-fit gap-2" onSubmit={handleSubmit}>
               {loginSuccess && (
                 <div className={`bg-green-200 text-green-500 font-bold text-sm rounded-md p-2`}>
                   Successfully Login
@@ -37,7 +36,7 @@ export default function Login() {
               )}
               {authError.length > 0 && (
                 <div className={`bg-red-300 text-red-700 font-bold text-sm rounded-md p-2`}>
-                  {authError?.map((err, i) => (<span key={i}>{err.message}</span>))}
+                  {authError?.map((err, i) => (<span key={i}>{err?.message}</span>))}
                 </div>
               )}
               <div className="grid grid-cols-[1fr_2fr] gap-2 items-center">
@@ -70,7 +69,7 @@ export default function Login() {
                   {errors.password && touched.password && (<div className="text-xs text-red-500">{errors.password}</div>)}
                 </div>
               </div>
-              <button type="submit" disabled={isLogin} className={`${isLogin && 'bg-gray-500'} self-end border-2 border-black rounded-md px-4 py-1`}>{isLogin ? 'Submit...' : 'Submit'}</button> 
+              <button type="submit" disabled={isLogin} className={`${isLogin && 'bg-gray-500'} self-end border-2 border-black rounded-md px-4 py-1`}>{isLogin ? 'Submit...' : 'Submit'}</button>
             </form>
           )
         }}

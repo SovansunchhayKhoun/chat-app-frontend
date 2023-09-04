@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import { useChatContext } from '../context/ChatContext'
 import type { User } from '../context/UserAxiosContext'
 

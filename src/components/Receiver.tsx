@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Message } from '../context/ChatContext'
 
 export default function Receiver({ message }: { message: Message }) {

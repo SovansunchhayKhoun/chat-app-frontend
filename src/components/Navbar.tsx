@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'
 import { useUserAxiosContext } from '../context/UserAxiosContext';
@@ -29,7 +29,7 @@ export default function Navbar() {
               <div className='flex items-center transition duration-200 text-white hover:bg-custDarkNavy px-2 py-1 rounded-xl'>
                 {user?.username} <AiFillCaretDown />
               </div>
-              <Dropdown toggle={toggle} setToggle={setToggle}>
+              <Dropdown toggle={toggle}>
                 <button className={`transition duration-200 px-4 py-1 border-b-2 text-custWhite hover:bg-custNavy`} onClick={() => { logout() }}>
                   Logout
                 </button>
