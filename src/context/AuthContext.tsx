@@ -81,6 +81,7 @@ export default function AuthContext({ children }: { children: React.ReactNode })
     setIsLogout(true)
     await Axios.post('/logout', token).then(() => {
       setUser({
+        _id: '',
         firstname: '',
         lastname: '',
         username: '',

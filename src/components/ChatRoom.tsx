@@ -8,12 +8,13 @@ import { socket } from '../socket/socket'
 
 export default function ChatRoom() {
   const { user } = useUserAxiosContext()
-  const { selectedUser, createMessage, chatMessages, chatRoomMessagesIsLoading, isCreating, chatRoomMessagesRefetch } = useChatContext()
+  const { selectedUser, createMessage, messages, isCreating, setMessages, chatRoomMessagesRefetch, chatRoomMessagesIsLoading } = useChatContext()
   const chatScroll = useRef<HTMLDivElement>(null)
   useEffect(() => {
     chatScroll?.current?.scrollIntoView({ behavior: "smooth", block: 'end' })
     const messageListener = () => {
-      socket().on("receive_message", () => {
+      socket().on("receive_message", (data) => {
+        setMessages([...messages, data])
         chatRoomMessagesRefetch()
       })
     }
@@ -31,7 +32,8 @@ export default function ChatRoom() {
           </div>
 
           <div className='container flex flex-col gap-1 px-4 py-2 h-full overflow-auto'>
-            {chatRoomMessagesIsLoading ? 'Loading...' : chatMessages?.map(msg => {
+            {messages?.length === 0 && <span className='text-custWhite'>Empty Chat box</span>}
+            {chatRoomMessagesIsLoading ? <span className='text-custWhite'>Loading...</span> : messages?.map(msg => {
               if (msg?.senderId === user?._id) {
                 return (
                   <div key={msg?._id} className='self-end'>
@@ -51,7 +53,7 @@ export default function ChatRoom() {
           <Formik
             initialValues={{ messageContent: '' }}
             onSubmit={async (values, { resetForm }) => {
-              await createMessage(values.messageContent, user?._id, selectedUser?._id)
+              await createMessage(values.messageContent, user._id, selectedUser?._id)
               resetForm()
             }}
           >

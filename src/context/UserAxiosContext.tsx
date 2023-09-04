@@ -1,10 +1,9 @@
 import axios, { AxiosHeaderValue, AxiosInstance } from "axios";
 import { createContext, useContext, useState } from "react";
-
-axios.defaults.baseURL = import.meta.env.VITE_API_URL+'/api'
+axios.defaults.baseURL = import.meta.env.VITE_API_URL + '/api'
 
 export type User = {
-  _id?: string,
+  _id: string,
   firstname: string,
   lastname: string,
   password: string,
@@ -23,19 +22,25 @@ type UserAxiosContext = {
   getUser: () => Promise<void>,
   userAxiosError: [] | never[],
   setUserAxiosError: React.Dispatch<React.SetStateAction<[]>> | React.Dispatch<React.SetStateAction<never[]>>,
-  setUser: React.Dispatch<React.SetStateAction<User | undefined>>,
-  user: User | undefined,
+  setUser: React.Dispatch<React.SetStateAction<User>>,
+  user: User,
 }
 
 const StateContext = createContext<UserAxiosContext | null>(null);
 
 export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
   const [token, setToken] = useState('')
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<User>({
+    _id: '',
+    firstname: '',
+    lastname: '',
+    password: '',
+    username: '',
+  })
   const [userAxiosError, setUserAxiosError] = useState([])
 
   const userAxios: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL+'/api',
+    baseURL: import.meta.env.VITE_API_URL + '/api',
     withCredentials: true,
   });
 
@@ -72,11 +77,11 @@ export const UserAxiosContext = ({ children }: UserAxiosContextProvider) => {
     }).then(({ data }) => {
       const { user } = data;
       setUser({
-        _id: user?._id,
-        firstname: user?.firstname,
-        lastname: user?.lastname,
-        password: user?.password,
-        username: user?.username
+        _id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        password: user.password,
+        username: user.username
       })
     }).catch(err => {
       const { response } = err

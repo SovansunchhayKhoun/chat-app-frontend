@@ -30,7 +30,7 @@ export default function Register() {
     <div className='flex flex-col w-fit gap-2'>
       <Formik
         validationSchema={UserSchema}
-        initialValues={{ firstname: '', lastname: '', username: '', password: '', confirmPassword: '' }}
+        initialValues={{ _id: '', firstname: '', lastname: '', username: '', password: '', confirmPassword: '' }}
         onSubmit={async (value, { resetForm }) => {
           await register(value, resetForm)
           // resetForm()
