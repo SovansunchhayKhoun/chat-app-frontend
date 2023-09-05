@@ -14,7 +14,7 @@ export default function Home() {
       2xl:px-96
       lg:px-24 
       md:px-10 
-      px-4 py-16'>
+      px-4 pt-16 py-4'>
         <LoginSuccessToast />
         <RegisterSuccessToast />
         <Outlet />

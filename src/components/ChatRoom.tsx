@@ -27,14 +27,14 @@ export default function ChatRoom() {
   }, [messages, setMessages])
 
   return (
-    <div className='w-full h-screen flex flex-col'>
+    <div className={`md:flex md:flex-1 ${!selectedUser && 'hidden'} w-full h-screen flex flex-col`}>
       <div onClick={() => {
         setSelectedUser(undefined)
       }} className='md:hidden self-start px-4 py-2 text-[24px] text-custWhite'>
         <HiOutlineArrowNarrowLeft />
       </div>
 
-      <div className='bg-custLightNavy rounded-md h-[70%] flex flex-col justify-center items-center'>
+      <div className='bg-custLightNavy rounded-md md:h-[70%] h-full flex flex-col justify-center items-center'>
         {!selectedUser ? <span className='text-custWhite'>No chat selected</span> : (
           <div className='flex flex-col w-full h-full'>
 
