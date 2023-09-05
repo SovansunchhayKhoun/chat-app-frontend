@@ -17,7 +17,7 @@ export default function ChatView() {
               <div className='flex h-[70%] gap-4 w-full'>
                 <UserList />
                 {/* Chat Panel */}
-                <div className={`${!selectedUser && 'md:flex-1 hidden'} ${selectedUser && 'md:flex-1'}`}>
+                <div className={`md:flex md:flex-1 ${!selectedUser && 'hidden'}`}>
                   <ChatRoom />
                 </div>
               </div>

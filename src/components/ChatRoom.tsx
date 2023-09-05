@@ -27,7 +27,7 @@ export default function ChatRoom() {
   }, [messages, setMessages])
 
   return (
-    <div className='flex-1 h-screen flex flex-col'>
+    <div className='w-full h-screen flex flex-col'>
       <div onClick={() => {
         setSelectedUser(undefined)
       }} className='md:hidden self-start px-4 py-2 text-[24px] text-custWhite'>
@@ -59,7 +59,7 @@ export default function ChatRoom() {
                   )
                 }
               })}
-              <div className='text-xs self-end text-custWhite'>{isSending && 'sending'}</div>
+              <div className='text-xs self-end text-custWhite'>{isSending && 'sending...'}</div>
               <div ref={chatScroll}></div>
             </div>
 

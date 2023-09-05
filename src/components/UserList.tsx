@@ -11,7 +11,7 @@ export default function UserList() {
     <div className={`${selectedUser && 'md:flex hidden'} ${!selectedUser && 'flex'} flex-col pb-4 gap-2 text-custWhite px-4 flex-1 overflow-auto rounded-md bg-[#053B50]`}>
       <div className='py-2 border-b-2'>User's list</div>
       {users?.filter(u => u._id !== user?._id).length === 0 && 'No users registered'}
-      {usersIsLoading ? 'Loading' : users?.filter(u => u._id !== user?._id).map(user => (<UserCard key={user?._id} user={user} />))}
+      {usersIsLoading ? 'Loading...' : users?.filter(u => u._id !== user?._id).map(user => (<UserCard key={user?._id} user={user} />))}
     </div>
   )
 }
