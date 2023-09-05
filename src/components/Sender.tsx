@@ -1,7 +1,6 @@
-import { useChatContext, type Message } from '../context/ChatContext'
+import type { Message } from '../context/ChatContext'
 
 export default function Sender({ message }: { message: Message }) {
-  const { isCreating } = useChatContext()
   return (
     <div className='flex flex-col'>
       <div className='flex items-center gap-1 text-custWhite'>
