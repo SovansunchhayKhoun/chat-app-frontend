@@ -1,11 +1,9 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useRef, RefObject } from 'react'
 import { useUserAxiosContext } from './UserAxiosContext'
-import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import type { User } from "../context/UserAxiosContext"
 import { socket } from '../socket/socket'
-
-socket()
+import { format } from 'date-fns'
 
 export type Chat = {
   _id: string,
@@ -20,22 +18,21 @@ export type Message = {
   senderId: string,
   receiverId: string,
   isRead?: boolean,
-  timeSent?: string
+  timeSent?: string,
 }
 
 type ChatContext = {
   isCreating: boolean,
+  isSending: boolean,
   getChatRoom: (senderId: string | undefined, receiverId: string | undefined) => Promise<void>,
   selectedUser: User | undefined,
   setSelectedUser: React.Dispatch<React.SetStateAction<User | undefined>>,
   createMessage: (messageContent: string, senderId: string, receiverId: string) => Promise<void>,
   chatErrors: AxiosResponse<unknown, unknown>[] | [],
   setChatErrors: React.Dispatch<React.SetStateAction<AxiosResponse<unknown, unknown>[]>>,
-  chatRoomMessagesIsLoading: boolean,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  chatRoomMessagesRefetch: <TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<any, unknown>>
+  chatScroll: RefObject<HTMLDivElement>,
   messages: Message[] | [],
-  setMessages: React.Dispatch<React.SetStateAction<Message[] | []>>
+  setMessages: React.Dispatch<React.SetStateAction<Message[] | []>>,
 }
 
 const StateContext = createContext<ChatContext | null>(null)
@@ -45,29 +42,17 @@ export default function ChatContext({ children }: { children: React.ReactNode })
   const [selectedUser, setSelectedUser] = useState<User | undefined>()
   const [chatErrors, setChatErrors] = useState<AxiosResponse[]>([]);
   const [isCreating, setIsCreating] = useState<boolean>(false)
+  const [isSending, setIsSending] = useState<boolean>(false)
   const [chatRoom, setChatRoom] = useState<Chat>({
     _id: '',
     senderId: '',
     receiverId: ''
   });
+  const chatScroll = useRef<HTMLDivElement>(null)
   const [messages, setMessages] = useState<Message[]>([])
-
-  const { isLoading: chatRoomMessagesIsLoading, refetch: chatRoomMessagesRefetch } = useQuery(
-    ['chatQuery', chatRoom._id], async () => {
-      if (chatRoom?._id === '') return []
-      if (chatRoom?._id !== '') {
-        return userAxios.get(`/chat-messages/${chatRoom?._id}`).then(({ data }: AxiosResponse) => {
-          setMessages(data?.messages)
-        }).catch(error => {
-          const { response } = error
-          setChatErrors([response?.data])
-          console.log(error)
-        })
-      }
-    }
-  )
-
   const getChatRoom = async (senderId: string | undefined, receiverId: string | undefined) => {
+    setMessages(() => [])
+    setIsCreating(true)
     await userAxios.post('/chat-rooms', {
       senderId, receiverId
     }).then(async (res: AxiosResponse) => {
@@ -77,31 +62,35 @@ export default function ChatContext({ children }: { children: React.ReactNode })
       const { response } = err
       setChatErrors([response?.data, ...chatErrors])
     })
+    setIsCreating(false)
   }
 
   const createMessage = async (messageContent: string, senderId: string, receiverId: string) => {
-    setIsCreating(true)
+    setIsSending(true)
     const newMessage: Message = {
       messageContent,
       senderId,
       receiverId,
       chatRoomId: chatRoom?._id,
+      timeSent: format(new Date(), 'yyyy/MM/dd HH:mm:ss'),
     }
-    await userAxios.post('/messages', newMessage).then(async () => {
-      setMessages([...messages, newMessage])
-      socket().emit("send_message", newMessage)
+
+    setMessages((prevMessages) => [...prevMessages, newMessage])
+    await userAxios.post('/messages', newMessage).then(() => {
+      socket.emit("send_message", newMessage)
     }).catch(err => {
       console.log(err)
     })
-    setIsCreating(false)
+    setIsSending(false)
   }
   return (
     <StateContext.Provider value={{
-      chatRoomMessagesIsLoading,
-      chatRoomMessagesRefetch,
-      isCreating,
       messages,
-      setMessages, getChatRoom, selectedUser, setSelectedUser, createMessage, chatErrors, setChatErrors
+      setMessages,
+      chatScroll,
+      isCreating,
+      isSending,
+      getChatRoom, selectedUser, setSelectedUser, createMessage, chatErrors, setChatErrors
     }}>
       {children}
     </StateContext.Provider>

@@ -13,11 +13,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element:  <Home />
+        element: <Home />
       },
       {
         path: "/login",
-        element: <Login/>
+        element: <Login />
       },
       {
         path: "/register",
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       },
       {
         path: "chat",
-        element: <ChatView />
+        element: <ChatView />,
       },
       {
         path: "*",

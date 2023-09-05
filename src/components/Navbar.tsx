@@ -15,7 +15,7 @@ export default function Navbar() {
   const [toggle, setToggle] = useState<boolean>(false)
   return (
     <div className='h-full flex justify-between items-center'>
-      <div className='flex gap-4 text-custWhite'>
+      <div className='flex md:gap-4 text-custWhite'>
         {navBar.map((l, i) => (
           <Link className='transition duration-200 hover:bg-custDarkNavy px-2 py-1 rounded-xl' key={i} to={l.to} >
             {l.name}
