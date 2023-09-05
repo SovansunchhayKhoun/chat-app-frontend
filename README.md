@@ -1,27 +1,18 @@
-# React + TypeScript + Vite
+## REALTIME CHAT-APP using the MERN stack.
+#### This app includes Authentication and Authorization using the JWT method 
+#### The frontend (React + Typescript) is setup by using VITE. 
+#### It is deployed using Netlify 
+<a href="https://ruined-chat-app.netlify.app/">Ruined Chat-App</a>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Install dependencies
+- Run `npm install --force`
+## Env File
+- Create a `.env` file, then fill
+- `VITE_API_URL` field as `http://localhost:API_PORT`
+- `NPM_FLAGS` field as `--force` for production purposes.
+## Running the app
+- Simply run `npm run dev`. It should run on `http://localhost:3000`
+then simply click on that link to launch the app
 
-Currently, two official plugins are available:
+<a href="https://github.com/SovansunchhayKhoun/chat-app-backend.git">Backend repository<a/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
